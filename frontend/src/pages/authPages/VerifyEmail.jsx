@@ -42,20 +42,22 @@ function VerifyEmail() {
         Please enter the verification code sent to your email address.
       </p>
 
-      <div className="flex items-center gap-2 mt-4">
-        <KeyRound />
-        <Input
-          type="text"
-          name="code"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="Enter verification code"
-        />
-      </div>
+      <form onSubmit={handleVerify}>
+        <div className="flex items-center gap-2 mt-4">
+          <KeyRound />
+          <Input
+            type="text"
+            name="code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="Enter verification code"
+          />
+        </div>
 
-      <Button disabled={loading} className="w-full mt-8" onClick={handleVerify}>
-        {loading ? <HashLoader size={20} color="white" /> : "Verify"}
-      </Button>
+        <Button disabled={loading} className="w-full mt-8" type="submit">
+          {loading ? <HashLoader size={20} color="white" /> : "Verify"}
+        </Button>
+      </form>
     </div>
   );
 }
