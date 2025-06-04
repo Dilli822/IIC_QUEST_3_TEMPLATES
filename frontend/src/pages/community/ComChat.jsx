@@ -6,22 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
 import { toast } from "sonner";
-import { MoreVertical } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
 import dayjs from "dayjs";
+import CommunityMenu from "./CommunityMenu";
 
-function ComChat({ community }) {
+function ComChat({ community, onUpdate }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const chatContainerRef = useRef(null);
   const API_URL = import.meta.env.VITE_API_URL;
-  const user = JSON.parse(localStorage.getItem("user"));
-  user._id = String(user._id); // Ensure consistent type
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = user?._id ? String(user._id) : null;
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -84,73 +78,46 @@ function ComChat({ community }) {
   }, []);
 
   // Send message
- const handleSend = async (e) => {
-  e.preventDefault();
-  const trimmedMessage = newMessage.trim();
-  if (!trimmedMessage) return;
+  const handleSend = async (e) => {
+    e.preventDefault();
+    const trimmedMessage = newMessage.trim();
+    if (!trimmedMessage) return;
 
-  try {
-    const res = await axios.post(
-      `${API_URL}/community/message/send`,
-      {
-        communityId: community._id,
-        content: trimmedMessage,
-      },
-      { withCredentials: true }
-    );
-
-    // Emit to socket only — don't manually append
-    socket.emit("newMessage", res.data, community._id);
-
-    setNewMessage("");
-  } catch (error) {
-    console.error(error);
-    toast.error("Message failed to send.");
-  }
-};
-
-
-  // Delete community
-  const handleDeleteCommunity = async () => {
     try {
-      await axios.delete(`${API_URL}/community/${community._id}`, {
-        withCredentials: true,
-      });
-      toast.success("Community deleted successfully");
+      const res = await axios.post(
+        `${API_URL}/community/message/send`,
+        {
+          communityId: community._id,
+          content: trimmedMessage,
+        },
+        { withCredentials: true }
+      );
+
+      // Emit to socket only — don't manually append
+      socket.emit("newMessage", res.data, community._id);
+
+      setNewMessage("");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to delete community");
+      toast.error("Message failed to send.");
     }
   };
 
   return (
-    <Card className="flex flex-col h-full p-6">
-      <div className="flex items-center justify-between mb-4">
+    <Card className="flex flex-col h-full p-6 bg-sky-50">
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{community?.name || "Community"}</h2>
 
-        {user._id === String(community.owner?._id) && (
-          <DropdownMenu>
-            <DropdownMenuTrigger className="focus-visible:outline-0">
-              <Button variant="ghost">
-                <MoreVertical className="w-5 h-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-30">
-              <DropdownMenuItem onClick={handleDeleteCommunity}>
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        <CommunityMenu community={community} onUpdate={onUpdate} />
       </div>
 
       {/* Chat Messages */}
       <div
         ref={chatContainerRef}
-        className="flex-1 border rounded-md p-4 overflow-y-auto mb-4"
+        className="flex-1 border rounded-md p-4 overflow-y-auto bg-[url('/chat-bg.jpg')] bg-no-repeat bg-cover"
       >
         {messages.map((msg, idx) => {
-          const isYou = msg.senderId === user._id;
+          const isYou = msg.senderId === userId;
 
           return (
             <div
@@ -162,12 +129,8 @@ function ComChat({ community }) {
               {!isYou && (
                 <Avatar>
                   <AvatarImage
-                    src={
-                      msg.sender?.imageUrl ||
-                      `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        msg.name || "U"
-                      )}`
-                    }
+                    src={msg.sender?.imageUrl}
+                    className="object-cover"
                   />
                   <AvatarFallback>
                     {msg.name?.charAt(0).toUpperCase() || "U"}
@@ -178,20 +141,20 @@ function ComChat({ community }) {
               <div className={isYou ? "text-right" : "text-left"}>
                 <div
                   className={`rounded-xl px-4 py-2 max-w-xs ${
-                    isYou ? "bg-blue-500 text-white" : "bg-muted"
+                    isYou ? "bg-blue-500 text-white" : "bg-gray-300"
                   }`}
                 >
                   {!isYou && <p className="font-semibold">{msg?.name}</p>}
                   <p className="text-sm">{msg.content}</p>
                 </div>
-                <div
-                  className={`text-xs mt-1 ${
-                    isYou ? "text-gray-300" : "text-gray-500"
-                  }`}
-                >
-                  {msg.time}
-                </div>
+                <div className={"text-xs mt-1 text-gray-700"}>{msg.time}</div>
               </div>
+              {isYou && (
+                <Avatar>
+                  <AvatarImage src={user.imageUrl} className="object-cover" />
+                  <AvatarFallback>{user.name?.[0] || "U"}</AvatarFallback>
+                </Avatar>
+              )}
             </div>
           );
         })}

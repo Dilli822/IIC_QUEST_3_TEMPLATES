@@ -11,7 +11,7 @@ function ChatLayout() {
   const [chatUsers, setChatUsers] = useState([]);
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const { otherUserId } = useParams();
+  const { recepientId } = useParams();
 
   useEffect(() => {
     const fetchChatUsers = async () => {
@@ -31,16 +31,16 @@ function ChatLayout() {
   }, [API_URL, user._id]);
 
   useEffect(() => {
-    if (!otherUserId) return;
+    if (!recepientId) return;
 
     // Disable chat with self
-    if (otherUserId === user._id) {
+    if (recepientId === user._id) {
       setSelectedUser(null);
       return;
     }
 
     // Check if user already in chat list
-    const existingUser = chatUsers.find((u) => u._id === otherUserId);
+    const existingUser = chatUsers.find((u) => u._id === recepientId);
     if (existingUser) {
       setSelectedUser(existingUser);
     } else {
@@ -48,7 +48,7 @@ function ChatLayout() {
       const fetchAndAddUser = async () => {
         try {
           setLoading(true);
-          const res = await axios.get(`${API_URL}/user/${otherUserId}`, {
+          const res = await axios.get(`${API_URL}/user/${recepientId}`, {
             withCredentials: true,
           });
           const newUser = res.data.user;
@@ -62,7 +62,7 @@ function ChatLayout() {
       };
       fetchAndAddUser();
     }
-  }, [API_URL, otherUserId, chatUsers, user._id]);
+  }, [API_URL, recepientId, chatUsers, user._id]);
 
   return (
     <div className="flex h-[90vh] max-w-7xl mx-auto p-4">
@@ -103,12 +103,12 @@ function ChatLayout() {
 
       {/* Main Chat Area */}
       <div className="flex-1 p-6 overflow-hidden">
-        {otherUserId === user._id ? (
+        {recepientId === user._id ? (
           <div className="text-red-500 text-center text-lg">
             You cannot chat with yourself.
           </div>
         ) : selectedUser ? (
-          <PersonalChat otherUser={selectedUser} />
+          <PersonalChat recepient={selectedUser} />
         ) : (
           <div className="text-gray-400 h-full flex items-center justify-center text-lg">
             Select a user to start chatting
