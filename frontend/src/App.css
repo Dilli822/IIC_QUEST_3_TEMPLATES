@@ -12,6 +12,32 @@
   animation: floatWithDelay 4s ease-in-out infinite;
 }
 
+.step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1; /* gray-300 */
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8; /* gray-400 */
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.step-circle.active {
+  border-color: #2563eb; /* blue-600 */
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.step-circle.completed {
+  background-color: #2563eb; /* blue-600 */
+  border-color: #2563eb;
+  color: white;
+}
 
 .box {
   position: relative;

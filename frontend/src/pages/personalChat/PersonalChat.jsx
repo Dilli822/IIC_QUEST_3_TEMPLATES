@@ -9,17 +9,17 @@ import { toast } from "sonner";
 import dayjs from "dayjs";
 import PersonalMenu from "./PersonalMenu";
 
-function PersonalChat({ recepient }) {
+function PersonalChat({ recipient }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const chatContainerRef = useRef(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
-  const roomId = [user._id, recepient._id].sort().join("_");
+  const roomId = [user._id, recipient._id].sort().join("_");
 
   useEffect(() => {
-    if (!recepient?._id) return;
+    if (!recipient?._id) return;
 
     socket.emit("joinRoom", roomId);
     fetchMessages();
@@ -47,7 +47,7 @@ function PersonalChat({ recepient }) {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(`${API_URL}/chat/messages/${recepient._id}`, {
+      const res = await axios.get(`${API_URL}/chat/messages/${recipient._id}`, {
         withCredentials: true,
       });
       const formatted = res.data.map(formatMessage);
@@ -75,7 +75,7 @@ function PersonalChat({ recepient }) {
       const res = await axios.post(
         `${API_URL}/chat/send`,
         {
-          recipientId: recepient._id,
+          recipientId: recipient._id,
           content: trimmed,
         },
         { withCredentials: true }
@@ -100,12 +100,12 @@ function PersonalChat({ recepient }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Avatar>
-            <AvatarImage src={recepient.imageUrl} className="object-cover" />
-            <AvatarFallback>{recepient.name?.[0] || "U"}</AvatarFallback>
+            <AvatarImage src={recipient.imageUrl} className="object-cover" />
+            <AvatarFallback>{recipient.name?.[0] || "U"}</AvatarFallback>
           </Avatar>
-          <h2 className="text-2xl font-bold">{recepient.name}</h2>
+          <h2 className="text-2xl font-bold">{recipient.name}</h2>
         </div>
-        <PersonalMenu recepient={recepient} />
+        <PersonalMenu recipient={recipient} />
       </div>
       {/* Messages */}
       <div

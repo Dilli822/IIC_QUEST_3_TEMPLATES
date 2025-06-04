@@ -9,10 +9,10 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuth } from "@/context/AuthContext";
-import { LogOut, User, Menu } from "lucide-react";
+import { LogOut, User, Menu, Crown } from "lucide-react";
 import NotificationPanel from "@/components/NotificationPanel";
 
-function Navbar({ notifications }) {
+function Navbar({ notifications, setSubscriptionOpen }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -83,12 +83,23 @@ function Navbar({ notifications }) {
         <div className="hidden sm:flex items-center gap-2">
           {user ? (
             <div className="flex items-center gap-4">
+              <Button
+                className="bg-blue-600 hover:bg-blue-500"
+                onClick={() => setSubscriptionOpen(true)}
+              >
+                Premium <Crown className="text-amber-400" />
+              </Button>
+
               <NotificationPanel notifications={notifications} />
 
               <DropdownMenu>
                 <DropdownMenuTrigger className="focus-visible:outline-0">
                   <Avatar className="h-9 w-9 cursor-pointer">
-                    <AvatarImage src={user.imageUrl} alt="@shadcn" className='object-cover'/>
+                    <AvatarImage
+                      src={user.imageUrl}
+                      alt="@shadcn"
+                      className="object-cover"
+                    />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>

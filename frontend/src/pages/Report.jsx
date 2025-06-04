@@ -4,28 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
 import { toast } from "sonner";
-
-// Custom icon for the marker
-const customIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-});
-
-function LocationSelector({ position, setPosition }) {
-  useMapEvents({
-    click(e) {
-      setPosition([e.latlng.lat, e.latlng.lng]);
-    },
-  });
-  return position ? <Marker position={position} icon={customIcon} /> : null;
-}
+import ReCAPTCHA from "react-google-recaptcha";
+import { HashLoader } from "react-spinners";
 
 function Report() {
   const [form, setForm] = useState({
@@ -36,13 +18,13 @@ function Report() {
     name: "",
     contact: "",
     category: "",
-    mapPosition: null,
   });
 
   const [captchaToken, setCaptchaToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const recaptchaRef = useRef(null);
   const API_URL = import.meta.env.VITE_API_URL;
+  const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -51,10 +33,6 @@ function Report() {
     } else {
       setForm({ ...form, [name]: value });
     }
-  };
-
-  const onCaptchaChange = (token) => {
-    setCaptchaToken(token);
   };
 
   const resetForm = () => {
@@ -66,17 +44,18 @@ function Report() {
       name: "",
       contact: "",
       category: "",
-      mapPosition: null,
     });
-    recaptchaRef.current.reset();
     setCaptchaToken(null);
+    if (recaptchaRef.current) {
+      recaptchaRef.current.reset();
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!captchaToken) {
-      toast.error("Please complete the reCAPTCHA verification.");
+      toast.error("Please complete the reCAPTCHA.");
       return;
     }
 
@@ -88,8 +67,7 @@ function Report() {
     formData.append("name", form.name);
     formData.append("contact", form.contact);
     formData.append("category", form.category);
-    formData.append("mapPosition", JSON.stringify(form.mapPosition));
-    formData.append("captchaToken", captchaToken);
+    formData.append("captcha", captchaToken); // Send token to backend for verification
 
     setLoading(true);
     try {
@@ -114,7 +92,9 @@ function Report() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="image">Upload Photo</Label>
+            <Label htmlFor="image">
+              Upload Photo <span className="text-red-500">*</span>
+            </Label>
             <Input
               id="image"
               name="image"
@@ -193,6 +173,7 @@ function Report() {
             />
           </div>
         </div>
+
         <div className="space-y-2">
           <Label htmlFor="description">
             Description <span className="text-red-500">*</span>
@@ -205,32 +186,11 @@ function Report() {
             onChange={handleChange}
           />
         </div>
-        <div className="space-y-2">
-          <Label>
-            Pinpoint Location on Map <span className="text-red-500">*</span>
-          </Label>
-          <MapContainer
-            center={[28.3949, 84.124]}
-            zoom={7}
-            scrollWheelZoom={false}
-            style={{ height: "300px", borderRadius: "12px" }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-            />
-            <LocationSelector
-              position={form.mapPosition}
-              setPosition={(pos) => setForm({ ...form, mapPosition: pos })}
-            />
-          </MapContainer>
-        </div>
 
-        {/* ReCAPTCHA */}
-        <div className="mt-4">
+        <div>
           <ReCAPTCHA
-            sitekey="6Lew7VArAAAAAN3SwXt2-NpBNLmQt5RY5nG0iYj0"
-            onChange={onCaptchaChange}
+            sitekey="6LeKslUrAAAAAE0J-QlnOOe89_wLFY512KjYV_Cw"
+            onChange={(token) => setCaptchaToken(token)}
             ref={recaptchaRef}
           />
         </div>
@@ -240,7 +200,7 @@ function Report() {
           className="w-full mt-4"
           disabled={!captchaToken || loading}
         >
-          {loading ? "Submitting..." : "Submit Report"}
+          {loading ? <HashLoader size={20} color="white" /> : "Submit Report"}
         </Button>
       </form>
     </Card>

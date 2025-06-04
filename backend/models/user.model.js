@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema(
     verificationToken: String,
     verificationTokenExpiresAt: Date,
     communities: [{ type: mongoose.Schema.Types.ObjectId, ref: "Community" }],
+    friendList: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

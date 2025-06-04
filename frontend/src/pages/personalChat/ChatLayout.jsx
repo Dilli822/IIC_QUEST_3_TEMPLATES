@@ -11,36 +11,36 @@ function ChatLayout() {
   const [chatUsers, setChatUsers] = useState([]);
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const { recepientId } = useParams();
-
+  const { recipientId } = useParams();
   useEffect(() => {
-    const fetchChatUsers = async () => {
+    const fetchFriendList = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${API_URL}/chat/users/${user._id}`, {
+        const res = await axios.get(`${API_URL}/chat/friends/${user._id}`, {
           withCredentials: true,
         });
-        setChatUsers(res.data);
+        setChatUsers(res.data); // list of friends
       } catch (error) {
-        console.error("Error fetching chat users:", error);
+        console.error("Error fetching friend list:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchChatUsers();
+
+    fetchFriendList();
   }, [API_URL, user._id]);
 
   useEffect(() => {
-    if (!recepientId) return;
+    if (!recipientId) return;
 
     // Disable chat with self
-    if (recepientId === user._id) {
+    if (recipientId === user._id) {
       setSelectedUser(null);
       return;
     }
 
     // Check if user already in chat list
-    const existingUser = chatUsers.find((u) => u._id === recepientId);
+    const existingUser = chatUsers.find((u) => u._id === recipientId);
     if (existingUser) {
       setSelectedUser(existingUser);
     } else {
@@ -48,7 +48,7 @@ function ChatLayout() {
       const fetchAndAddUser = async () => {
         try {
           setLoading(true);
-          const res = await axios.get(`${API_URL}/user/${recepientId}`, {
+          const res = await axios.get(`${API_URL}/user/${recipientId}`, {
             withCredentials: true,
           });
           const newUser = res.data.user;
@@ -62,7 +62,7 @@ function ChatLayout() {
       };
       fetchAndAddUser();
     }
-  }, [API_URL, recepientId, chatUsers, user._id]);
+  }, [API_URL, recipientId, chatUsers, user._id]);
 
   return (
     <div className="flex h-[90vh] max-w-7xl mx-auto p-4">
@@ -72,7 +72,7 @@ function ChatLayout() {
 
         <div>
           <h3 className="text-md font-semibold mb-2 text-gray-700">
-            Your Chats
+            Your Friends
           </h3>
           {loading ? (
             <Loader2 className="w-5 h-5 animate-spin flex mx-auto" />
@@ -103,12 +103,12 @@ function ChatLayout() {
 
       {/* Main Chat Area */}
       <div className="flex-1 p-6 overflow-hidden">
-        {recepientId === user._id ? (
+        {recipientId === user._id ? (
           <div className="text-red-500 text-center text-lg">
             You cannot chat with yourself.
           </div>
         ) : selectedUser ? (
-          <PersonalChat recepient={selectedUser} />
+          <PersonalChat recipient={selectedUser} />
         ) : (
           <div className="text-gray-400 h-full flex items-center justify-center text-lg">
             Select a user to start chatting

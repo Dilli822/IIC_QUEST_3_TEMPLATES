@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Phone, Video } from "lucide-react";
 import CallPopUp from "./CallPopUp"; // Adjust the path as needed
 
-const PersonalMenu = ({ recepient }) => {
+const PersonalMenu = ({ recipient }) => {
   const [callType, setCallType] = useState(null); // "voice" | "video" | null
 
   return (
@@ -19,7 +19,7 @@ const PersonalMenu = ({ recepient }) => {
 
       {callType && (
         <CallPopUp
-          recepient={recepient}
+          recipient={recipient}
           type={callType}
           onClose={() => setCallType(null)}
         />

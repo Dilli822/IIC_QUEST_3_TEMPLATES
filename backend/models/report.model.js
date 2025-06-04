@@ -40,17 +40,7 @@ const ReportSchema = new mongoose.Schema(
         "Other",
       ],
     },
-    mapPosition: {
-      type: {
-        type: String,
-        enum: ["Point"], // GeoJSON type for point
-        default: "Point",
-      },
-      coordinates: {
-        type: [Number], // [longitude, latitude]
-        required: [true, "Map position is required"],
-      },
-    },
+
     status: {
       type: String,
       enum: ["Pending", "In Progress", "Resolved", "Rejected"],
@@ -59,8 +49,5 @@ const ReportSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-// Create a 2dsphere index for geospatial queries (optional, but good for location-based searching)
-ReportSchema.index({ mapPosition: "2dsphere" });
 
 export default mongoose.model("Report", ReportSchema);

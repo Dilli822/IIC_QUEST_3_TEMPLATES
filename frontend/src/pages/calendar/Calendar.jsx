@@ -13,8 +13,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Events from "./Events";
 
-// Replace these with your own images or URLs
+// Seasonal banner images
 const seasonImages = {
   spring:
     "https://thumbs.dreamstime.com/b/young-tree-branches-close-up-concept-early-spring-seasons-weather-modern-wallpaper-banner-design-selective-natural-focus-92065458.jpg?w=992",
@@ -34,8 +35,9 @@ function getSeason(date) {
   return "winter";
 }
 
-function Calender() {
+function Calendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const monthKey = format(currentMonth, "yyyy-MM");
   const season = getSeason(currentMonth);
   const seasonImage = seasonImages[season];
 
@@ -84,13 +86,19 @@ function Calender() {
       for (let i = 0; i < 7; i++) {
         const isToday = isSameDay(day, today);
         const isCurrentMonth = isSameMonth(day, monthStart);
+        const isSaturday = day.getDay() === 6 && isCurrentMonth; // <-- only Saturdays in current month
+
         days.push(
           <div
             key={day.toString()}
-            className={`p-2 text-center rounded-full text-sm ${
+            className={`p-2 text-center rounded-full text-sm cursor-pointer ${
               isCurrentMonth ? "text-black" : "text-gray-300"
             } ${
-              isToday ? "bg-blue-500 text-white font-bold" : "hover:bg-gray-200"
+              isToday
+                ? "bg-blue-500 text-white font-bold"
+                : isSaturday
+                ? "text-red-600 bg-red-100 hover:bg-red-200"
+                : "hover:bg-gray-200"
             }`}
           >
             {format(day, "d")}
@@ -110,19 +118,25 @@ function Calender() {
   };
 
   return (
-    <Card className="max-w-md mx-auto p-0 overflow-hidden shadow-md">
-      <img
-        src={seasonImage}
-        alt="Season Banner"
-        className="w-full h-60 object-cover"
-      />
-      <div className="p-4 space-y-4">
-        {renderHeader()}
-        {renderDays()}
-        {renderCells()}
-      </div>
-    </Card>
+    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 justify-center items-start p-4 my-8">
+      {/* Calendar Panel */}
+      <Card className="w-full p-0 overflow-hidden shadow-md">
+        <img
+          src={seasonImage}
+          alt="Season Banner"
+          className="w-full h-60 object-cover"
+        />
+        <div className="p-4 space-y-4">
+          {renderHeader()}
+          {renderDays()}
+          {renderCells()}
+        </div>
+      </Card>
+
+      {/* Events Panel */}
+      <Events monthKey={monthKey} />
+    </div>
   );
 }
 
-export default Calender;
+export default Calendar;

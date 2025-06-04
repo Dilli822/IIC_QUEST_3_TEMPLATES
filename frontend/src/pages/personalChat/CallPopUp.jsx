@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import { PhoneOff, Mic, Video, MicOff } from "lucide-react";
 
-function CallPopUp({ recepient, onClose, type = "voice" }) {
+function CallPopUp({ recipient, onClose, type = "voice" }) {
   const [isMuted, setIsMuted] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [isRinging, setIsRinging] = useState(true);
@@ -52,11 +52,11 @@ function CallPopUp({ recepient, onClose, type = "voice" }) {
           ) : (
             <div className="flex flex-col items-center text-center mt-6">
               <img
-                src={recepient.imageUrl}
-                alt={recepient.name}
+                src={recipient.imageUrl}
+                alt={recipient.name}
                 className="w-28 h-28 rounded-full mx-auto mb-4 object-cover"
               />
-              <h2 className="text-2xl font-semibold">{recepient.name}</h2>
+              <h2 className="text-2xl font-semibold">{recipient.name}</h2>
               <p className="text-sm text-gray-500 mt-1">
                 {isRinging
                   ? "Ringing..."

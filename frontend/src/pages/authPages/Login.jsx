@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 // import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuth } from "@/context/AuthContext";
 import { ChevronLeft, Eye, EyeOff, Fingerprint, Mail } from "lucide-react";
@@ -89,9 +89,12 @@ function Login() {
           {loading ? <HashLoader size={20} color="white" /> : " Login"}
         </Button>
       </form>
-      <p className="text-sm hover:underline cursor-pointer text-center mt-2">
-        Forget password?
-      </p>
+      <Link to="/auth/forgot-password">
+        {" "}
+        <p className="text-sm hover:underline cursor-pointer text-center mt-2">
+          Forget password?
+        </p>
+      </Link>
 
       <p className="text-sm text-center mt-2">
         Don&apos;t have an account?{" "}
