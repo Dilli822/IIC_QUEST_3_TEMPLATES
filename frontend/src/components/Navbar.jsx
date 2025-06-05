@@ -16,7 +16,6 @@ import NotificationPanel from "@/components/NotificationPanel";
 function Navbar({ notifications, setSubscriptionOpen }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  console.log(user);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getNavLinkClass = (isActive) =>

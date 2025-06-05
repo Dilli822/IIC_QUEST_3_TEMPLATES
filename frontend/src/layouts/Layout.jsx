@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Subscription from "@/components/Subscription";
 import Tips from "@/components/Tips";
-import socket from "@/lib/socket";
+import socket from "@/lib/socket"; // Your socket.io client instance
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -12,36 +12,44 @@ function Layout() {
   const [isSubscriptionOpen, setSubscriptionOpen] = useState(false);
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    // 1. Emit userOnline when connected
+    if (user?._id) {
+      if (socket.connected) {
+        socket.emit("userOnline", user._id);
+      } else {
+        socket.on("connect", () => {
+          socket.emit("userOnline", user._id);
+        });
+      }
+    }
+
+    // 2. Ask for notification permission
     if (
       Notification.permission === "default" ||
       Notification.permission === "denied"
     ) {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          console.log("Notification permission granted");
-        } else {
-          console.log("Notification permission denied");
-        }
-      });
+      Notification.requestPermission();
     }
 
-    socket.on("pushNotification", (data) => {
-      console.log("Received", data);
-
-      // Native browser notification
+    // 3. Listen for push notifications
+    const handleNotification = (data) => {
       if (Notification.permission === "granted") {
         new Notification("New Notification", {
           body: data.message,
           icon: "http://via.placeholder.com/50",
         });
       }
-
-      // App state update
       setNotifications((prev) => [...prev, data]);
-    });
+    };
 
+    socket.on("pushNotification", handleNotification);
+
+    // Cleanup
     return () => {
-      socket.off("pushNotification");
+      socket.off("connect");
+      socket.off("pushNotification", handleNotification);
     };
   }, []);
 
@@ -51,13 +59,18 @@ function Layout() {
         notifications={notifications}
         setSubscriptionOpen={setSubscriptionOpen}
       />
+
+      {/* Conditionally render Subscription modal when isSubscriptionOpen is true */}
       {isSubscriptionOpen && (
         <Subscription onClose={() => setSubscriptionOpen(false)} />
       )}
+
       <main className="flex-grow">
         <Outlet />
       </main>
+
       <Footer />
+
       <Chatbot />
       <Tips />
     </div>

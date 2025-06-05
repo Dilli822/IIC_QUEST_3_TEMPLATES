@@ -1,3 +1,4 @@
+import socket from "@/lib/socket";
 import axios from "axios";
 import { createContext, useContext, useState } from "react";
 import { toast } from "sonner";
@@ -37,6 +38,9 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
+      if (user?._id) {
+        socket.emit("userOffline", user._id);
+      }
       const res = await axios.post(
         `${API_URL}/auth/logout`,
         {},
@@ -47,6 +51,9 @@ export const AuthProvider = ({ children }) => {
       toast.success(res?.data.message || "Logged out succesfully");
       return res;
     } catch (error) {
+      if (user?._id) {
+        socket.emit("userOffline", user._id);
+      }
       console.error("Logout error:", error);
       setUser(null);
       localStorage.removeItem("user");

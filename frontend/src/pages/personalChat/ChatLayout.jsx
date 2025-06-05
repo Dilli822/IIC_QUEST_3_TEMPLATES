@@ -3,12 +3,14 @@ import { Loader2 } from "lucide-react";
 import PersonalChat from "./PersonalChat";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import socket from "@/lib/socket";
 
 function ChatLayout() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatUsers, setChatUsers] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState(new Set());
 
   const user = JSON.parse(localStorage.getItem("user"));
   const { recipientId } = useParams();
@@ -29,6 +31,27 @@ function ChatLayout() {
 
     fetchFriendList();
   }, [API_URL, user._id]);
+
+  useEffect(() => {
+    if (user?._id) {
+      if (socket.connected) {
+        socket.emit("userOnline", user._id);
+      } else {
+        socket.on("connect", () => {
+          socket.emit("userOnline", user._id);
+        });
+      }
+    }
+
+    socket.on("onlineUsers", (users) => {
+      setOnlineUsers(new Set(users));
+    });
+
+    return () => {
+      socket.off("onlineUsers");
+      socket.off("connect");
+    };
+  }, [user?._id]);
 
   useEffect(() => {
     if (!recipientId) return;
@@ -89,11 +112,16 @@ function ChatLayout() {
                 }`}
                 onClick={() => setSelectedUser(userItem)}
               >
-                <img
-                  src={userItem.imageUrl}
-                  alt={userItem.name}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
+                <div className="relative w-10 h-10">
+                  <img
+                    src={userItem.imageUrl}
+                    alt={userItem.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  {onlineUsers.has(userItem._id) && (
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full" />
+                  )}
+                </div>
                 <span className="truncate">{userItem.name}</span>
               </div>
             ))

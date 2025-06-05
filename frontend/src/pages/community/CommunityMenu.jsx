@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LogOut, MoreVertical, Trash2, Users } from "lucide-react";
 import {
@@ -26,9 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import axios from "axios";
-// import { io } from "socket.io-client";
-
-// const socket = io(import.meta.env.VITE_API_URL, { withCredentials: true });
+import socket from "@/lib/socket";
 
 const CommunityMenu = ({ community, onUpdate }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -37,10 +35,9 @@ const CommunityMenu = ({ community, onUpdate }) => {
 
   const [showMembers, setShowMembers] = useState(false);
   const [members, setMembers] = useState([]);
-  // const [onlineUsers, setOnlineUsers] = useState([]);
-
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState(new Set());
 
   // Fetch members
   const fetchMembers = async () => {
@@ -59,18 +56,29 @@ const CommunityMenu = ({ community, onUpdate }) => {
     }
   };
 
-  // Socket setup
-  // useEffect(() => {
-  //   socket.emit("join-community", community._id);
-  //   socket.on("online-users", (onlineUserIds) => {
-  //     setOnlineUsers(onlineUserIds);
-  //   });
+  useEffect(() => {
+    if (user?._id) {
+      if (socket.connected) {
+        socket.emit("userOnline", user._id);
+      } else {
+        socket.on("connect", () => {
+          socket.emit("userOnline", user._id);
+        });
+      }
+    }
 
-  //   return () => {
-  //     socket.emit("leave-community", community._id);
-  //     socket.off("online-users");
-  //   };
-  // }, [community._id]);
+    // Listen for only current community's online users
+    const handleCommunityOnline = (userIds) => {
+      setOnlineUsers(new Set(userIds));
+    };
+
+    socket.on("communityOnlineUsers", handleCommunityOnline);
+
+    return () => {
+      socket.off("communityOnlineUsers", handleCommunityOnline);
+      socket.off("connect");
+    };
+  }, [user?._id, community?._id]);
 
   const handleDeleteCommunity = async () => {
     try {
@@ -90,9 +98,7 @@ const CommunityMenu = ({ community, onUpdate }) => {
       await axios.post(
         `${API_URL}/community/${community._id}/leave`,
         {},
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       toast.success("Left the community");
       onUpdate?.();
@@ -139,15 +145,14 @@ const CommunityMenu = ({ community, onUpdate }) => {
           <div className="space-y-3">
             {members.map((m) => {
               const isAdmin = m._id === community?.owner?._id;
-              // const isOnline = onlineUsers.includes(m._id);
 
               return (
                 <div key={m._id} className="flex items-center gap-3">
-                  {/* <span
+                  <span
                     className={`w-2.5 h-2.5 rounded-full ${
-                      isOnline ? "bg-green-500" : "bg-gray-400"
+                      onlineUsers.has(m._id) ? "bg-green-500" : "bg-gray-400"
                     }`}
-                  /> */}
+                  />
                   <div className="w-9 h-9 rounded-full overflow-hidden">
                     <img
                       src={m.imageUrl}
