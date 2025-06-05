@@ -28,6 +28,7 @@ import OtherProfile from "@/components/OtherProfile";
 import ChatLayout from "@/pages/personalChat/ChatLayout";
 import Notice from "@/pages/Notice";
 import MultiStepForm from "@/pages/MultiStepForm";
+import CartPage from "@/pages/Cart";
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -53,6 +54,7 @@ function AppRoutes() {
           <Route path="/chat/:recipientId" element={<ChatLayout />} />
           <Route path="/notice" element={<Notice />} />
           <Route path="/form" element={<MultiStepForm />} />
+          <Route path="/cart" element={<CartPage />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />

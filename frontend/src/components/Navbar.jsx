@@ -9,7 +9,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuth } from "@/context/AuthContext";
-import { LogOut, User, Menu, Crown } from "lucide-react";
+import { LogOut, User, Menu, Crown, ShoppingCart } from "lucide-react";
 import NotificationPanel from "@/components/NotificationPanel";
 
 function Navbar({ notifications, setSubscriptionOpen }) {
@@ -91,6 +91,7 @@ function Navbar({ notifications, setSubscriptionOpen }) {
                 Premium <Crown className="text-amber-400" />
               </Button>
 
+              <ShoppingCart onClick={() => navigate("/cart")} />
               <NotificationPanel notifications={notifications} />
 
               <DropdownMenu>
