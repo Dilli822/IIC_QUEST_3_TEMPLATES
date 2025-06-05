@@ -15,9 +15,6 @@ export const initSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);
 
-    // Notifications listener (can add more if needed)
-    // socket.on("customEvent", () => {});
-
     // Chat: Join a community room
     socket.on("joinRoom", (communityId) => {
       socket.join(communityId);

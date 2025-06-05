@@ -15,6 +15,7 @@ import NotificationPanel from "@/components/NotificationPanel";
 function Navbar({ notifications, setSubscriptionOpen }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  console.log(user);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getNavLinkClass = (isActive) =>
@@ -100,7 +101,9 @@ function Navbar({ notifications, setSubscriptionOpen }) {
                       alt="@shadcn"
                       className="object-cover"
                     />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback>
+                      {user.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-30">

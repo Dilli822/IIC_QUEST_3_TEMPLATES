@@ -42,7 +42,6 @@ function ComLayout() {
           withCredentials: true,
         }
       );
-      console.log(res?.data?.community);
       setJoinedCommunities((prev) => [...prev, res.data.community]);
       toast.success(res?.data.message || "Room created Succesfully");
       setName("");
@@ -72,7 +71,7 @@ function ComLayout() {
       setNotJoinedCommunities(notJoinedRes?.data || []);
       setSelectedCommunity(null);
     } catch (error) {
-      console.log("Error fetching communities:", error);
+      console.error("Error fetching communities:", error);
     } finally {
       setLoading(false);
     }
@@ -86,14 +85,13 @@ function ComLayout() {
   const handleJoin = async (community) => {
     try {
       setLoading(true);
-      const res = await axios.post(
+      await axios.post(
         `${API_URL}/community/${community._id}/join`,
         {},
         {
           withCredentials: true,
         }
       );
-      console.log(res);
       toast.success(`You have joined ${community.name}`);
 
       setJoinedCommunities((prev) => [...prev, community]);

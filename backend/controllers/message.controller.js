@@ -57,8 +57,8 @@ export const sendMessage = async (req, res) => {
       community: communityId,
       content,
     });
-
-    res.status(201).json(message);
+    const populatedMessage = await message.populate("sender", "name imageUrl");
+    res.status(201).json(populatedMessage);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -3,11 +3,9 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Subscription from "@/components/Subscription";
 import Tips from "@/components/Tips";
+import socket from "@/lib/socket";
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import io from "socket.io-client";
-
-const socket = io("http://localhost:8000");
 
 function Layout() {
   const [notifications, setNotifications] = useState([]);

@@ -28,7 +28,7 @@ function Tips() {
   if (!visible) return null;
 
   return (
-    <div className="fixed top-20 right-4 max-w-xs bg-black border shadow-md rounded-lg p-4 z-50">
+    <div className="fixed bottom-5 left-0 max-w-xs bg-black border shadow-md rounded-lg p-4 z-50">
       <div className="flex justify-between items-center">
         <p className="text-sm text-white">{tips[tipIndex]}</p>
         <button

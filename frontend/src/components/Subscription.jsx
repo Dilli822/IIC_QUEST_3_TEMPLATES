@@ -1,11 +1,4 @@
-import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import React from "react";
 import { Button } from "@/components/ui/button";
 
 const plans = [
@@ -43,69 +36,68 @@ const plans = [
 ];
 
 function Subscription({ onClose }) {
-  const [selectedPlan, setSelectedPlan] = useState("free");
-
-  const handleSubscribe = () => {
-    alert(`Subscribed to ${selectedPlan} plan!`);
+  const handleSubscribe = (planId) => {
+    alert(`Subscribed to ${planId} plan!`);
     onClose();
   };
 
+  const getBorderAndBg = (planId) => {
+    switch (planId) {
+      case "free":
+        return "border-green-500 bg-green-50";
+      case "monthly":
+        return "border-blue-500 bg-blue-50";
+      case "yearly":
+        return "border-purple-500 bg-purple-50";
+      default:
+        return "border-gray-200 bg-white";
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full">
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-semibold">Choose Your Subscription</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl">
+        {/* Header */}
+        <div className="flex justify-between items-center px-8 py-6 border-b">
+          <h2 className="text-3xl font-bold text-gray-800">
+            Choose Your Subscription
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-600 hover:text-gray-900 text-2xl leading-none"
+            className="text-gray-500 hover:text-red-500 text-3xl font-light"
             aria-label="Close popup"
           >
             &times;
           </button>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-6 p-6">
-          {plans.map((plan) => {
-            const isSelected = selectedPlan === plan.id;
-            return (
-              <Card
-                key={plan.id}
-                onClick={() => setSelectedPlan(plan.id)}
-                className={`cursor-pointer flex-1 border ${
-                  isSelected
-                    ? "border-blue-600 bg-blue-50"
-                    : "border-gray-200 hover:border-blue-400"
-                }`}
+        {/* Plan Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8">
+          {plans.map((plan) => (
+            <div
+              key={plan.id}
+              className={`transition-all duration-300 p-8 rounded-2xl shadow-md border-2 flex flex-col text-center cursor-default ${getBorderAndBg(plan.id)}`}
+            >
+              <h3 className="text-2xl font-semibold text-gray-800 mb-3">
+                {plan.title}
+              </h3>
+              <p className="text-4xl font-bold text-gray-900 mb-1">
+                {plan.price}
+              </p>
+              <p className="text-gray-600 text-sm mb-6">/ {plan.billing}</p>
+              <ul className="text-gray-700 text-base space-y-2 list-disc list-inside flex-grow mb-6 text-left">
+                {plan.features.map((feature, index) => (
+                  <li key={index}>{feature}</li>
+                ))}
+              </ul>
+              <Button
+                className="w-full mt-auto"
+                onClick={() => handleSubscribe(plan.id)}
               >
-                <CardHeader>
-                  <CardTitle>{plan.title}</CardTitle>
-                  <CardDescription className="text-2xl font-bold">
-                    {plan.price}{" "}
-                    <span className="text-sm font-normal text-gray-600">
-                      / {plan.billing}
-                    </span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <ul className="list-disc list-inside text-gray-700">
-                    {plan.features.map((feature, i) => (
-                      <li key={i}>{feature}</li>
-                    ))}
-                  </ul>
-                  <Button
-                    variant={isSelected ? "default" : "outline"}
-                    className="w-full mt-4"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSubscribe();
-                    }}
-                  >
-                    {plan.id === "free" ? "Get Started" : "Subscribe"}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
+                {plan.id === "free" ? "Get Started" : "Subscribe"}
+              </Button>
+            </div>
+          ))}
         </div>
       </div>
     </div>
