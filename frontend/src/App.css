@@ -1,0 +1,106 @@
+@keyframes floatWithDelay {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.float-delay {
+  animation: floatWithDelay 4s ease-in-out infinite;
+}
+
+.step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1; /* gray-300 */
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8; /* gray-400 */
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.step-circle.active {
+  border-color: #2563eb; /* blue-600 */
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.step-circle.completed {
+  background-color: #2563eb; /* blue-600 */
+  border-color: #2563eb;
+  color: white;
+}
+
+.box {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.box .wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: url(/wave.png);
+  background-size: 1000px 100px;
+  pointer-events: none;
+  filter: brightness(0) saturate(100%) sepia(1) hue-rotate(180deg)
+    saturate(700%) contrast(0.5);
+}
+
+/* Reuse single animation for waves moving background */
+@keyframes animate {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 1000px;
+  }
+}
+
+/* Wave1 animation */
+.box .wave1 {
+  animation: animate 30s linear infinite;
+  z-index: 1000;
+  opacity: 0.9;
+  animation-delay: 0s;
+  bottom: 0;
+}
+
+/* Wave2 animation */
+.box .wave2 {
+  animation: animate 15s linear infinite;
+  z-index: 999;
+  opacity: 0.7;
+  animation-delay: -7s;
+  bottom: 10px;
+}
+
+/* Wave3 animation */
+.box .wave3 {
+  animation: animate 30s linear infinite;
+  z-index: 998;
+  opacity: 0.2;
+  animation-delay: -2s;
+  bottom: 15px;
+}
+
+/* Wave4 animation */
+.box .wave4 {
+  animation: animate 15s linear infinite;
+  z-index: 997;
+  opacity: 0.5;
+  animation-delay: -5s;
+  bottom: 20px;
+}
