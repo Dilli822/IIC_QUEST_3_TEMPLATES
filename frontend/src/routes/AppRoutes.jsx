@@ -29,6 +29,8 @@ import ChatLayout from "@/pages/personalChat/ChatLayout";
 import Notice from "@/pages/Notice";
 import MultiStepForm from "@/pages/MultiStepForm";
 import CartPage from "@/pages/Cart";
+import DashboardLayout from "@/layouts/DashboardLayout";
+import Dashboard from "@/pages/dashboard/Dashboard";
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -56,6 +58,11 @@ function AppRoutes() {
           <Route path="/form" element={<MultiStepForm />} />
           <Route path="/cart" element={<CartPage />} />
         </Route>
+
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<Dashboard />} />
+        </Route>
+
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />

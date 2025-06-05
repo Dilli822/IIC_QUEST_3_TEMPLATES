@@ -114,15 +114,7 @@ function CartPage() {
         </div>
 
         {/* Right: Coupon + Totals */}
-        <div className="w-full lg:w-1/3 space-y-6">
-          <Card className="p-6 space-y-4 shadow-lg">
-            <h3 className="text-lg font-semibold">Apply Coupon</h3>
-            <div className="flex gap-2">
-              <Input placeholder="Enter your coupon" />
-              <Button>Apply</Button>
-            </div>
-          </Card>
-
+        <div className="w-full lg:w-1/3">
           <Card className="p-6 space-y-4 shadow-lg">
             <h3 className="text-lg font-semibold">Cart Totals</h3>
             <div className="space-y-2">

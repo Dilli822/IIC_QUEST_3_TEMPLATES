@@ -5,6 +5,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -108,6 +109,10 @@ function Navbar({ notifications, setSubscriptionOpen }) {
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-30">
+                  <NavLink to="dashboard">
+                    <Button className="w-full my-1"> Dashboard</Button>
+                  </NavLink>
+                  <DropdownMenuSeparator />
                   <NavLink to="profile">
                     <DropdownMenuItem>
                       <User />
