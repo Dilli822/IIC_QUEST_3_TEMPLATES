@@ -17,6 +17,20 @@ function ComChat({ community, onUpdate }) {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = user?._id ? String(user._id) : null;
 
+  const [communityOnline, setCommunityOnline] = useState(new Set());
+
+  useEffect(() => {
+    const handleCommunityOnline = (userIds) => {
+      setCommunityOnline(new Set(userIds));
+    };
+
+    socket.on("communityOnlineUsers", handleCommunityOnline);
+
+    return () => {
+      socket.off("communityOnlineUsers", handleCommunityOnline);
+    };
+  }, []);
+
   // Scroll to bottom on new messages
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -108,7 +122,17 @@ function ComChat({ community, onUpdate }) {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{community?.name || "Community"}</h2>
 
-        <CommunityMenu community={community} onUpdate={onUpdate} />
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span
+              className={`w-2.5 h-2.5 rounded-full ${
+                communityOnline.size > 0 ? "bg-green-500" : "bg-gray-400"
+              }`}
+            />
+            {communityOnline.size}/{community?.members?.length || 0}
+          </div>
+          <CommunityMenu community={community} onUpdate={onUpdate} />
+        </div>
       </div>
 
       {/* Chat Messages */}
