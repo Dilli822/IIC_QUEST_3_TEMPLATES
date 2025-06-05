@@ -31,6 +31,7 @@ import MultiStepForm from "@/pages/MultiStepForm";
 import CartPage from "@/pages/Cart";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import Dashboard from "@/pages/dashboard/Dashboard";
+import Quiz from "@/pages/games/Quiz";
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -57,6 +58,8 @@ function AppRoutes() {
           <Route path="/notice" element={<Notice />} />
           <Route path="/form" element={<MultiStepForm />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/quiz" element={<Quiz />} />
+
         </Route>
 
         <Route path="/dashboard" element={<DashboardLayout />}>
