@@ -1,0 +1,4 @@
+
+gitignore
+1. package-lock.json
+2. node_modules
