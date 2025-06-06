@@ -11,7 +11,7 @@ import {
   Mail,
   User2,
 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ import { toast } from "sonner";
 function Register() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
+  console.log('api-->',API_URL)
 
   const [showPassword, setShowPassword] = useState(false);
   const toggleView = () => setShowPassword(!showPassword);
@@ -41,6 +42,7 @@ function Register() {
     e.preventDefault();
     try {
       setLoading(true);
+      console.log("inputs-->",inputs)
       const res = await axios.post(`${API_URL}/auth/register`, inputs, {
         withCredentials: true,
       });

@@ -7,10 +7,36 @@ import {
 } from "./emailTemplates.js";
 import { transporter, sender } from "./nodemailer.config.js";
 
+
+// from: `"Your App" <${process.env.EMAIL_USERNAME}>`,
+//     to: email,
+//     subject: subject,
+//     text: message,
+//     html: `<p>Reset your password <a href="${resetUrl}">here</a></p>`,
+
+// export const sendVerificationEmail = async (email, verificationToken) => {
+//   try {
+//     await transporter.sendMail({
+//       from: sender,
+//       to: email,
+//       subject: "Verify your email",
+//       html: VERIFICATION_EMAIL_TEMPLATE.replace(
+//         "{verificationCode}",
+//         verificationToken
+//       ),
+//     });
+//     console.log("Verification email sent");
+//   } catch (error) {
+//     console.error("Error sending verification email:", error);
+//     throw new Error("Failed to send verification email");
+//   }
+// };
+
+
 export const sendVerificationEmail = async (email, verificationToken) => {
   try {
     await transporter.sendMail({
-      from: sender,
+      from: `"Your App" <${process.env.MAILTRAP_USER}>`,
       to: email,
       subject: "Verify your email",
       html: VERIFICATION_EMAIL_TEMPLATE.replace(

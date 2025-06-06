@@ -10,16 +10,17 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user")) || null
   );
-
+  
   const [loading, setLoading] = useState(false);
-
+  
   const login = async (inputs) => {
     setLoading(true);
-
+    
     try {
       const res = await axios.post(`${API_URL}/auth/login`, inputs, {
         withCredentials: true,
       });
+      console.log('api-->',res)
       setUser(res?.data.user);
       localStorage.setItem("user", JSON.stringify(res?.data.user));
       toast.success(res?.data?.message || "Logged in Succesfully");
