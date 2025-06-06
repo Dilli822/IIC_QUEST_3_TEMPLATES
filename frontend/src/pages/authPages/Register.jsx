@@ -61,58 +61,59 @@ function Register() {
         Join us today! Please fill in your details to create an account.
       </p>
 
-      {/* Name input */}
-      <div className="flex items-center gap-2 mt-4">
-        <User2 />
-        <Input
-          type="text"
-          name="name"
-          placeholder="Enter your Name"
-          value={inputs.name}
-          onChange={handleChange}
-          required
-        />
-      </div>
+      <form onSubmit={handleSubmit}>
+        {/* Name input */}
+        <div className="flex items-center gap-2 mt-4">
+          <User2 />
+          <Input
+            type="text"
+            name="name"
+            placeholder="Enter your Name"
+            value={inputs.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-      {/* Email input */}
-      <div className="flex items-center gap-2 mt-4">
-        <Mail />
-        <Input
-          type="email"
-          name="email"
-          placeholder="Enter your Email"
-          value={inputs.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        {/* Email input */}
+        <div className="flex items-center gap-2 mt-4">
+          <Mail />
+          <Input
+            type="email"
+            name="email"
+            placeholder="Enter your Email"
+            value={inputs.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-      {/* Password input */}
-      <div className="flex items-center gap-2 mt-4 relative">
-        <Fingerprint />
-        <Input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          placeholder="Create your Password"
-          value={inputs.password}
-          onChange={handleChange}
-          required
-        />
-        <p className="cursor-pointer flex justify-end mr-2 absolute right-0">
-          {showPassword ? (
-            <span onClick={toggleView}>
-              <Eye size={20} />
-            </span>
-          ) : (
-            <span onClick={toggleView}>
-              <EyeOff size={20} />
-            </span>
-          )}
-        </p>
-      </div>
+        {/* Password input */}
+        <div className="flex items-center gap-2 mt-4 relative">
+          <Fingerprint />
+          <Input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Create your Password"
+            value={inputs.password}
+            onChange={handleChange}
+            required
+          />
+          <p className="cursor-pointer flex justify-end mr-2 absolute right-0">
+            {showPassword ? (
+              <span onClick={toggleView}>
+                <Eye size={20} />
+              </span>
+            ) : (
+              <span onClick={toggleView}>
+                <EyeOff size={20} />
+              </span>
+            )}
+          </p>
+        </div>
 
-      {/* Role  */}
-      {/* <div className="flex items-center gap-8 mt-4">
+        {/* Role  */}
+        {/* <div className="flex items-center gap-8 mt-4">
         <Label htmlFor="role">Role :</Label>
         <RadioGroup name="role" className="flex items-center gap-5">
           <div className="flex items-center space-x-2">
@@ -126,8 +127,8 @@ function Register() {
         </RadioGroup>
       </div> */}
 
-      {/* Gender  */}
-      {/* <div className="flex items-center gap-8 mt-4">
+        {/* Gender  */}
+        {/* <div className="flex items-center gap-8 mt-4">
         <Label htmlFor="gender">Gender :</Label>
         <RadioGroup id="gender" className="flex items-center gap-5">
           <div className="flex items-center space-x-2">
@@ -144,9 +145,10 @@ function Register() {
           </div>
         </RadioGroup>
       </div> */}
-      <Button className="w-full mt-8" disabled={loading} onClick={handleSubmit}>
-        {loading ? <HashLoader size={20} color="white" /> : "Sign Up"}
-      </Button>
+        <Button className="w-full mt-8" disabled={loading} type="submit">
+          {loading ? <HashLoader size={20} color="white" /> : "Sign Up"}
+        </Button>
+      </form>
 
       <p className="text-sm text-center mt-2">
         Already have an account?{" "}

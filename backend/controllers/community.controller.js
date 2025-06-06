@@ -74,6 +74,53 @@ export const joinCommunity = async (req, res) => {
   }
 };
 
+// --------------------------- Leave a community ---------------------------
+export const leaveCommunity = async (req, res) => {
+  const userId = req.userId;
+  const { communityId } = req.params;
+
+  if (!communityId) {
+    return res.status(400).json({ message: "Community ID is required" });
+  }
+
+  try {
+    const community = await Community.findById(communityId);
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    const alreadyMember = community.members.includes(userId);
+    if (!alreadyMember) {
+      return res.status(403).json({
+        message: "You are not a member of this community!",
+      });
+    }
+
+    // Prevent owner from leaving their own community
+    if (community.owner.toString() === userId) {
+      return res
+        .status(403)
+        .json({ message: "Owners cannot leave their own community" });
+    }
+
+    // Remove user from community members
+    community.members = community.members.filter(
+      (memberId) => memberId.toString() !== userId
+    );
+    await community.save();
+
+    // Remove community from user's communities
+    await User.findByIdAndUpdate(userId, {
+      $pull: { communities: community._id },
+    });
+
+    res.status(200).json({ message: "Left community successfully" });
+  } catch (error) {
+    console.error("Leave Community Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // --------------------------- Get communities user has NOT joined ---------------------------
 export const getNotJoinedCommunities = async (req, res) => {
   const userId = req.userId;
@@ -81,7 +128,9 @@ export const getNotJoinedCommunities = async (req, res) => {
   try {
     const communities = await Community.find({
       members: { $nin: [userId] },
-    }).populate("owner", "name").populate("members", "name imageUrl");
+    })
+      .populate("owner", "name")
+      .populate("members", "name imageUrl");
 
     res.status(200).json(communities);
   } catch (error) {
@@ -97,7 +146,9 @@ export const getUserCommunities = async (req, res) => {
   try {
     const communities = await Community.find({
       members: userId,
-    }).populate("owner", "name").populate("members", "name");
+    })
+      .populate("owner", "name")
+      .populate("members", "name");
 
     res.status(200).json(communities);
   } catch (error) {
@@ -133,6 +184,27 @@ export const deleteCommunity = async (req, res) => {
     res.status(200).json({ message: "Community and messages deleted" });
   } catch (error) {
     console.error("Delete Community Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ------------------------Get all members-----------------------------------
+export const getAllMembers = async (req, res) => {
+  const communityId = req.params.communityId;
+
+  try {
+    const community = await Community.findById(communityId).populate(
+      "members",
+      "name imageUrl"
+    );
+
+    if (!community) {
+      return res.status(404).json({ message: "Community not found!" });
+    }
+
+    res.status(200).json(community.members);
+  } catch (error) {
+    console.error("Error fetching members:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 };

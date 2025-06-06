@@ -41,21 +41,27 @@ function ResetPassword() {
         Enter a new password for your account.
       </p>
 
-      <div className="flex items-center gap-2 mt-4">
-        <Fingerprint />
-        <Input
-          type="password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="New Password"
-          required
-        />
-      </div>
+      <form onSubmit={handleSubmit}>
+        <div className="flex items-center gap-2 mt-4">
+          <Fingerprint />
+          <Input
+            type="password"
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="New Password"
+            required
+          />
+        </div>
 
-      <Button className="w-full mt-8" disabled={loading} onClick={handleSubmit}>
-        {loading ? <HashLoader size={20} color="white" /> : "Set New Password"}
-      </Button>
+        <Button className="w-full mt-8" disabled={loading} type="submit">
+          {loading ? (
+            <HashLoader size={20} color="white" />
+          ) : (
+            "Set New Password"
+          )}
+        </Button>
+      </form>
       <Button className="absolute top-2 left-2" onClick={() => navigate("/")}>
         <ChevronLeft />
       </Button>

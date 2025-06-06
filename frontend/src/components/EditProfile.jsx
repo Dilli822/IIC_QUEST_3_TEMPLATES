@@ -14,8 +14,10 @@ import { FileTextIcon, Mail, Phone, User2 } from "lucide-react";
 import { HashLoader } from "react-spinners";
 import axios from "axios";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 function EditProfile() {
+  const { setUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [originalProfile, setOriginalProfile] = useState(null);
   const [inputs, setInputs] = useState({
@@ -89,6 +91,12 @@ function EditProfile() {
       });
 
       toast.success(res?.data.message || "Profile Updated succesfully");
+
+      const updatedUser = res?.data?.user;
+      if (updatedUser) {
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
     } catch (error) {
       console.error(error);
       toast.error(error?.response?.data.message || "Failed to update Profile!");

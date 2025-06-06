@@ -8,3 +8,4 @@ const router = express.Router();
 router.post("/create", upload.single("image"), submitReport);
 router.get("/all", getReports);
 export default router;
+

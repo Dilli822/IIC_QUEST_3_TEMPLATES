@@ -41,21 +41,23 @@ function ForgotPassword() {
         your password.
       </p>
 
-      <div className="flex items-center gap-2 mt-4">
-        <Mail />
-        <Input
-          type="email"
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your Email"
-          required
-        />
-      </div>
+      <form onSubmit={handleSubmit}>
+        <div className="flex items-center gap-2 mt-4">
+          <Mail />
+          <Input
+            type="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your Email"
+            required
+          />
+        </div>
 
-      <Button disabled={loading} className="w-full mt-8" onClick={handleSubmit}>
-        {loading ? <HashLoader size={20} color="white" /> : "Send Reset Link"}
-      </Button>
+        <Button disabled={loading} className="w-full mt-8" type="submit">
+          {loading ? <HashLoader size={20} color="white" /> : "Send Reset Link"}
+        </Button>
+      </form>
       <Button className="absolute top-2 left-2" onClick={() => navigate("/")}>
         <ChevronLeft />
       </Button>

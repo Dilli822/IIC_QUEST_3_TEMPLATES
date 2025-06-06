@@ -42,7 +42,6 @@ function ComLayout() {
           withCredentials: true,
         }
       );
-      console.log(res?.data?.community);
       setJoinedCommunities((prev) => [...prev, res.data.community]);
       toast.success(res?.data.message || "Room created Succesfully");
       setName("");
@@ -55,29 +54,30 @@ function ComLayout() {
   };
 
   // Fetch both joined and not joined room
+  const fetchRooms = async () => {
+    try {
+      setLoading(true);
+
+      const [joinedRes, notJoinedRes] = await Promise.all([
+        axios.get(`${API_URL}/community/my`, {
+          withCredentials: true,
+        }),
+        axios.get(`${API_URL}/community/available`, {
+          withCredentials: true,
+        }),
+      ]);
+
+      setJoinedCommunities(joinedRes?.data || []);
+      setNotJoinedCommunities(notJoinedRes?.data || []);
+      setSelectedCommunity(null);
+    } catch (error) {
+      console.error("Error fetching communities:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        setLoading(true);
-
-        const [joinedRes, notJoinedRes] = await Promise.all([
-          axios.get(`${API_URL}/community/my`, {
-            withCredentials: true,
-          }),
-          axios.get(`${API_URL}/community/available`, {
-            withCredentials: true,
-          }),
-        ]);
-
-        setJoinedCommunities(joinedRes?.data || []);
-        setNotJoinedCommunities(notJoinedRes?.data || []);
-      } catch (error) {
-        console.log("Error fetching communities:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRooms();
   }, [API_URL]);
 
@@ -85,14 +85,13 @@ function ComLayout() {
   const handleJoin = async (community) => {
     try {
       setLoading(true);
-      const res = await axios.post(
+      await axios.post(
         `${API_URL}/community/${community._id}/join`,
         {},
         {
           withCredentials: true,
         }
       );
-      console.log(res);
       toast.success(`You have joined ${community.name}`);
 
       setJoinedCommunities((prev) => [...prev, community]);
@@ -199,7 +198,7 @@ function ComLayout() {
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-hidden">
         {selectedCommunity ? (
-          <CommunityChat community={selectedCommunity} />
+          <CommunityChat community={selectedCommunity} onUpdate={fetchRooms} />
         ) : (
           <div className="text-gray-400 h-full flex items-center justify-center text-lg">
             Select a community to start chatting

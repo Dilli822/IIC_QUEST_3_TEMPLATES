@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+// import { Label } from "@/components/ui/label";
+// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuth } from "@/context/AuthContext";
 import { ChevronLeft, Eye, EyeOff, Fingerprint, Mail } from "lucide-react";
 import React, { useState } from "react";
@@ -37,41 +37,42 @@ function Login() {
       <p className="text-gray-500 mb-6 mt-2 text-center text-sm">
         Please log in to access your account and continue your journey with us.
       </p>
-      <div className="flex items-center gap-2 mt-4">
-        <Mail />
-        <Input
-          type="email"
-          name="email"
-          placeholder="Enter your Email"
-          value={inputs.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <div className="flex items-center gap-2 mt-4 relative">
-        <Fingerprint />
+      <form onSubmit={handleSubmit}>
+        <div className="flex items-center gap-2 mt-4">
+          <Mail />
+          <Input
+            type="email"
+            name="email"
+            placeholder="Enter your Email"
+            value={inputs.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="flex items-center gap-2 mt-4 relative">
+          <Fingerprint />
 
-        <Input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          placeholder="Create your Password"
-          value={inputs.password}
-          onChange={handleChange}
-          required
-        />
-        <p className="cursor-pointer bg-white flex justify-end pl-2 mr-2 absolute right-0">
-          {showPassword ? (
-            <span onClick={toggleView}>
-              <Eye size={20} />
-            </span>
-          ) : (
-            <span onClick={toggleView}>
-              <EyeOff size={20} />
-            </span>
-          )}
-        </p>
-      </div>
-      {/* <div className="flex items-center gap-8 mt-4">
+          <Input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Create your Password"
+            value={inputs.password}
+            onChange={handleChange}
+            required
+          />
+          <p className="cursor-pointer bg-white flex justify-end pl-2 mr-2 absolute right-0">
+            {showPassword ? (
+              <span onClick={toggleView}>
+                <Eye size={20} />
+              </span>
+            ) : (
+              <span onClick={toggleView}>
+                <EyeOff size={20} />
+              </span>
+            )}
+          </p>
+        </div>
+        {/* <div className="flex items-center gap-8 mt-4">
         <Label htmlFor="role">Role :</Label>
         <RadioGroup name="role" className="flex items-center gap-5">
           <div className="flex items-center space-x-2">
@@ -84,12 +85,16 @@ function Login() {
           </div>
         </RadioGroup>
       </div> */}
-      <Button disabled={loading} className="w-full mt-8" onClick={handleSubmit}>
-        {loading ? <HashLoader size={20} color="white" /> : " Login"}
-      </Button>
-      <p className="text-sm hover:underline cursor-pointer text-center mt-2">
-        Forget password?
-      </p>
+        <Button disabled={loading} className="w-full mt-8" type="submit">
+          {loading ? <HashLoader size={20} color="white" /> : " Login"}
+        </Button>
+      </form>
+      <Link to="/auth/forgot-password">
+        {" "}
+        <p className="text-sm hover:underline cursor-pointer text-center mt-2">
+          Forget password?
+        </p>
+      </Link>
 
       <p className="text-sm text-center mt-2">
         Don&apos;t have an account?{" "}

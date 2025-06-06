@@ -41,12 +41,24 @@ function OtherProfile() {
     }
   }, [userId]);
 
-  const handleMessageClick = () => {
+  const handleMessageClick = async () => {
     if (user?._id === currentUserId) {
       toast.error("You cannot chat with yourself.");
       return;
     }
-    navigate(`/chat/${user._id}`);
+
+    try {
+      await axios.post(
+        `${API_URL}/chat/add-friend/${user._id}`,
+        {},
+        { withCredentials: true }
+      );
+
+      navigate(`/chat/${user._id}`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add friend or open chat.");
+    }
   };
 
   if (!user) return <p>Loading...</p>;

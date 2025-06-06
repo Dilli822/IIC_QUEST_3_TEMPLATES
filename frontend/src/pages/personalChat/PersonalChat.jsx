@@ -6,18 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
 import { toast } from "sonner";
+import dayjs from "dayjs";
+import PersonalMenu from "./PersonalMenu";
 
-function PersonalChat({ otherUser }) {
+function PersonalChat({ recipient }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const chatContainerRef = useRef(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
-  const roomId = [user._id, otherUser._id].sort().join("_");
+  const roomId = [user._id, recipient._id].sort().join("_");
 
   useEffect(() => {
-    if (!otherUser?._id) return;
+    if (!recipient?._id) return;
 
     socket.emit("joinRoom", roomId);
     fetchMessages();
@@ -45,7 +47,7 @@ function PersonalChat({ otherUser }) {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(`${API_URL}/chat/messages/${otherUser._id}`, {
+      const res = await axios.get(`${API_URL}/chat/messages/${recipient._id}`, {
         withCredentials: true,
       });
       const formatted = res.data.map(formatMessage);
@@ -62,11 +64,7 @@ function PersonalChat({ otherUser }) {
     name: msg.sender.name,
     imageUrl: msg.sender.imageUrl,
     content: msg.message,
-    time: new Date(msg.createdAt).toLocaleTimeString([], {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }),
+    time: dayjs(msg.createdAt).format("MMM D, YYYY • h:mm A"),
   });
 
   const handleSend = async () => {
@@ -77,7 +75,7 @@ function PersonalChat({ otherUser }) {
       const res = await axios.post(
         `${API_URL}/chat/send`,
         {
-          recipientId: otherUser._id,
+          recipientId: recipient._id,
           content: trimmed,
         },
         { withCredentials: true }
@@ -97,20 +95,22 @@ function PersonalChat({ otherUser }) {
   };
 
   return (
-    <Card className="flex flex-col h-full p-6">
+    <Card className="flex flex-col h-full p-6 bg-sky-50">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
-        <Avatar>
-          <AvatarImage src={otherUser.imageUrl} className="object-cover" />
-          <AvatarFallback>{otherUser.name?.[0] || "U"}</AvatarFallback>
-        </Avatar>
-        <h2 className="text-2xl font-bold">{otherUser.name}</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Avatar>
+            <AvatarImage src={recipient.imageUrl} className="object-cover" />
+            <AvatarFallback>{recipient.name?.[0] || "U"}</AvatarFallback>
+          </Avatar>
+          <h2 className="text-2xl font-bold">{recipient.name}</h2>
+        </div>
+        <PersonalMenu recipient={recipient} />
       </div>
-
       {/* Messages */}
       <div
         ref={chatContainerRef}
-        className="flex-1 border rounded-md p-4 overflow-y-auto mb-4"
+        className="flex-1 border rounded-md p-4 overflow-y-auto bg-[url('/chat-bg.jpg')] bg-no-repeat bg-cover"
       >
         {messages.map((msg, idx) => {
           const isYou = msg.senderId === user._id;
@@ -136,13 +136,7 @@ function PersonalChat({ otherUser }) {
                   {!isYou && <p className="font-semibold">{msg.name}</p>}
                   <p className="text-sm">{msg.content}</p>
                 </div>
-                <div
-                  className={`text-xs mt-1 ${
-                    isYou ? "text-gray-300" : "text-gray-500"
-                  }`}
-                >
-                  {msg.time}
-                </div>
+                <div className={"text-xs mt-1 text-gray-700"}>{msg.time}</div>
               </div>
               {isYou && (
                 <Avatar>

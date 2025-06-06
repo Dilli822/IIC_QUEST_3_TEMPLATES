@@ -5,14 +5,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuth } from "@/context/AuthContext";
-import { LogOut, User, Menu } from "lucide-react";
+import { LogOut, User, Menu, Crown, ShoppingCart } from "lucide-react";
 import NotificationPanel from "@/components/NotificationPanel";
 
-function Navbar({ notifications }) {
+function Navbar({ notifications, setSubscriptionOpen }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -83,16 +84,34 @@ function Navbar({ notifications }) {
         <div className="hidden sm:flex items-center gap-2">
           {user ? (
             <div className="flex items-center gap-4">
+              <Button
+                className="bg-blue-600 hover:bg-blue-500"
+                onClick={() => setSubscriptionOpen(true)}
+              >
+                Premium <Crown className="text-amber-400" />
+              </Button>
+
+              <ShoppingCart onClick={() => navigate("/cart")} />
               <NotificationPanel notifications={notifications} />
 
               <DropdownMenu>
                 <DropdownMenuTrigger className="focus-visible:outline-0">
                   <Avatar className="h-9 w-9 cursor-pointer">
-                    <AvatarImage src={user.imageUrl} alt="@shadcn" className='object-cover'/>
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarImage
+                      src={user.imageUrl}
+                      alt="@shadcn"
+                      className="object-cover"
+                    />
+                    <AvatarFallback>
+                      {user.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-30">
+                  <NavLink to="dashboard">
+                    <Button className="w-full my-1"> Dashboard</Button>
+                  </NavLink>
+                  <DropdownMenuSeparator />
                   <NavLink to="profile">
                     <DropdownMenuItem>
                       <User />
