@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
       });
       console.log('api-->',res)
       setUser(res?.data.user);
+      console.log("login-->",res.data.user)
       localStorage.setItem("user", JSON.stringify(res?.data.user));
       toast.success(res?.data?.message || "Logged in Succesfully");
       return { success: true, data: res.data };

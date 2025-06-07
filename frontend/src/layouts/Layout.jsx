@@ -1,4 +1,5 @@
 import Chatbot from "@/components/Chatbot";
+import EventsModal from "@/components/EventsModal";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Subscription from "@/components/Subscription";
@@ -6,6 +7,7 @@ import Tips from "@/components/Tips";
 import socket from "@/lib/socket"; // Your socket.io client instance
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+
 
 function Layout() {
   const [notifications, setNotifications] = useState([]);
@@ -53,8 +55,11 @@ function Layout() {
     };
   }, []);
 
+  
+
   return (
     <div className="flex flex-col min-h-screen">
+     
       <Navbar
         notifications={notifications}
         setSubscriptionOpen={setSubscriptionOpen}
